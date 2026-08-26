@@ -6,9 +6,16 @@ import type { Database } from "@/types/database";
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey || supabaseUrl === "https://placeholder.supabase.co") {
+    return supabaseResponse;
+  }
+
   const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() {
@@ -24,6 +31,7 @@ export async function updateSession(request: NextRequest) {
           );
         },
       },
+      db: { schema: 'mercadeo' },
     }
   );
 
@@ -35,10 +43,17 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/register");
   const isProtectedRoute =
     request.nextUrl.pathname.startsWith("/dashboard") ||
+    request.nextUrl.pathname.startsWith("/finances") ||
     request.nextUrl.pathname.startsWith("/copilot") ||
     request.nextUrl.pathname.startsWith("/inventory") ||
     request.nextUrl.pathname.startsWith("/orders") ||
     request.nextUrl.pathname.startsWith("/customers") ||
+    request.nextUrl.pathname.startsWith("/billing") ||
+    request.nextUrl.pathname.startsWith("/payroll") ||
+    request.nextUrl.pathname.startsWith("/accounting") ||
+    request.nextUrl.pathname.startsWith("/alerts") ||
+    request.nextUrl.pathname.startsWith("/marketing") ||
+    request.nextUrl.pathname.startsWith("/emergency-fund") ||
     request.nextUrl.pathname.startsWith("/settings");
 
   if (!user && isProtectedRoute) {
