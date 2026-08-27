@@ -54,13 +54,13 @@ const navItems: NavItemDef[] = [
     icon: Package,
     children: [
       { label: "Productos", href: "/inventory" },
-      { label: "Categorias", href: "/inventory/categorias" },
-      { label: "Stock Bajo", href: "/inventory/stock-bajo" },
+      { label: "Categorias", href: "/inventory/categories" },
+      { label: "Stock Bajo", href: "/inventory/low-stock" },
     ],
   },
   { label: "Clientes", icon: Users, href: "/customers" },
   { label: "Ordenes/Ventas", icon: ShoppingCart, href: "/orders" },
-  { label: "Catalogo Online", icon: Globe, href: "/catalogo" },
+  { label: "Catalogo Online", icon: Globe, href: "/catalog" },
   {
     label: "Facturacion",
     icon: Receipt,
@@ -73,22 +73,22 @@ const navItems: NavItemDef[] = [
     label: "Nomina",
     icon: UserCog,
     children: [
-      { label: "Empleados", href: "/nomina/empleados" },
-      { label: "Comisiones", href: "/nomina/comisiones" },
+      { label: "Empleados", href: "/payroll" },
+      { label: "Comisiones", href: "/payroll/commissions" },
     ],
   },
-  { label: "Contabilidad", icon: BookOpen, href: "/contabilidad" },
+  { label: "Contabilidad", icon: BookOpen, href: "/accounting" },
   { label: "Copilot IA", icon: Bot, href: "/copilot" },
-  { label: "Alertas", icon: Bell, href: "/alertas", badge: 3 },
+  { label: "Alertas", icon: Bell, href: "/alerts", badge: 3 },
   {
     label: "Marketing",
     icon: Megaphone,
     children: [
-      { label: "Campanas", href: "/marketing/campanas" },
-      { label: "Segmentacion", href: "/marketing/segmentacion" },
+      { label: "Campanas", href: "/marketing/campaigns" },
+      { label: "Segmentacion", href: "/marketing/segments" },
     ],
   },
-  { label: "Fondo Emergencia", icon: Shield, href: "/fondo-emergencia" },
+  { label: "Fondo Emergencia", icon: Shield, href: "/emergency-fund" },
 ]
 
 const bottomItems: NavItemDef[] = [
