@@ -15,11 +15,11 @@ interface QuickAction {
 }
 
 const actions: QuickAction[] = [
-  { label: "Nueva Venta", href: "/orders/nueva", icon: ShoppingCartIcon },
-  { label: "Agregar Producto", href: "/inventory/nuevo", icon: PackageIcon },
-  { label: "Ver Catalogo", href: "/catalogo", icon: GlobeIcon },
-  { label: "Nueva Factura", href: "/facturacion/nueva", icon: ReceiptIcon },
-  { label: "Nuevo Cliente", href: "/customers/nuevo", icon: UsersIcon },
+  { label: "Nueva Venta", href: "/orders/new", icon: ShoppingCartIcon },
+  { label: "Agregar Producto", href: "/inventory/new", icon: PackageIcon },
+  { label: "Ver Catalogo", href: "/catalog", icon: GlobeIcon },
+  { label: "Nueva Factura", href: "/billing/new", icon: ReceiptIcon },
+  { label: "Nuevo Cliente", href: "/customers/new", icon: UsersIcon },
 ]
 
 export function QuickActions() {
