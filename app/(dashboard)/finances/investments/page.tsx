@@ -31,7 +31,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/client"
 import { getCurrentUser, signOut } from "@/lib/actions/auth"
 
 function formatCurrency(amount: number) {

@@ -104,8 +104,8 @@ export default function AccountingReportsPage() {
     if (!businessId) return
 
     startTransition(async () => {
-      const { createClient } = await import("@/lib/supabase/server")
-      const supabase = await createClient()
+      const { createClient } = await import("@/lib/supabase/client")
+      const supabase = createClient()
 
       if (selectedReport === "balance") {
         const [salesRes, expensesRes, receivableRes, payableRes] =
