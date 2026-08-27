@@ -13,21 +13,21 @@ import {
 const features = [
   {
     icon: LayoutDashboard,
-    title: "Business Management",
+    title: "Gestión del Negocio",
     description:
-      "Inventory, orders, customers, and analytics in one unified dashboard.",
+      "Inventario, órdenes, clientes y analíticas en un panel unificado.",
   },
   {
     icon: Globe,
-    title: "Public Catalog",
+    title: "Catálogo Público",
     description:
-      "Share a beautiful online storefront with your customers — no extra setup.",
+      "Comparte una vitrina en línea con tus clientes — sin configuración extra.",
   },
   {
     icon: Bot,
-    title: "AI Copilot",
+    title: "Copiloto IA",
     description:
-      "Get intelligent insights, draft messages, and automate routine tasks.",
+      "Obtén insights inteligentes, redacta mensajes y automatiza tareas rutinarias.",
   },
 ];
 
@@ -42,12 +42,12 @@ export function LandingHero() {
           </Link>
           <nav className="flex items-center gap-2">
             <Button variant="ghost" render={<Link href="/catalog/demo" />}>
-              View Catalog
+              Ver Catálogo
             </Button>
             <Button variant="outline" render={<Link href="/login" />}>
-              Sign in
+              Iniciar Sesión
             </Button>
-            <Button render={<Link href="/register" />}>Get started</Button>
+            <Button render={<Link href="/register" />}>Comenzar</Button>
           </nav>
         </div>
       </header>
@@ -55,20 +55,20 @@ export function LandingHero() {
       <main className="flex-1">
         <section className="mx-auto max-w-6xl px-4 py-20 text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Run your business.
+            Administra tu negocio.
             <br />
-            <span className="text-muted-foreground">Sell online. Think smarter.</span>
+            <span className="text-muted-foreground">Vende online. Piensa más inteligente.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            MERCADEO is your all-in-one platform for business management, a public
-            product catalog, and an AI copilot that helps you grow.
+            MERCADEO es tu plataforma todo-en-uno para la gestión de tu negocio, un catálogo
+            público de productos y un copiloto IA que te ayuda a crecer.
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Button size="lg" render={<Link href="/register" />}>
-              Start for free
+              Comenzar Gratis
             </Button>
             <Button size="lg" variant="outline" render={<Link href="/dashboard" />}>
-              Open dashboard
+              Abrir Panel
             </Button>
           </div>
         </section>
@@ -90,7 +90,7 @@ export function LandingHero() {
       </main>
 
       <footer className="border-t py-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} MERCADEO. Built with Next.js & Supabase.
+        © {new Date().getFullYear()} MERCADEO. Hecho con Next.js y Supabase.
       </footer>
     </div>
   );

@@ -8,10 +8,6 @@ import { CategoryManager } from "@/components/inventory/category-manager"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/client"
 
-export const metadata = {
-  title: "Categorias",
-}
-
 export default function CategoriesPage() {
   const [categories, setCategories] = React.useState<string[]>([])
   const [productCounts, setProductCounts] = React.useState<Record<string, number>>({})

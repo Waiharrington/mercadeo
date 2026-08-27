@@ -7,10 +7,6 @@ import { AccountsTable } from "@/components/finances/accounts-table"
 import { updateAccountsPayable, getAccountsPayable } from "@/lib/actions/finances"
 import { getCurrentUser } from "@/lib/actions/auth"
 
-export const metadata = {
-  title: "Cuentas por Pagar",
-}
-
 export default function AccountsPayablePage() {
   const [accounts, setAccounts] = React.useState<any[]>([])
   const [loading, setLoading] = React.useState(true)

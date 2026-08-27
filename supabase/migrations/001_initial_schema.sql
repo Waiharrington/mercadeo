@@ -6,8 +6,7 @@
 CREATE SCHEMA IF NOT EXISTS mercadeo;
 SET search_path TO mercadeo, public;
 
--- Enable required extensions
-create extension if not exists "uuid-ossp";
+-- gen_random_uuid() is built-in to PostgreSQL 13+
 
 -- ============================================================
 -- 1. PROFILES (extends auth.users)
@@ -57,7 +56,7 @@ create index idx_profiles_business_slug on mercadeo.profiles(business_slug);
 -- 2. PRODUCTS
 -- ============================================================
 create table mercadeo.products (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
   name text not null,
   description text,
@@ -86,7 +85,7 @@ create index idx_products_is_active on mercadeo.products(is_active);
 -- 3. PRODUCT VARIANTS
 -- ============================================================
 create table mercadeo.product_variants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   product_id uuid not null references mercadeo.products(id) on delete cascade,
   variant_name text not null,
   variant_value text not null,
@@ -103,7 +102,7 @@ create index idx_product_variants_product_id on mercadeo.product_variants(produc
 -- 4. CUSTOMERS
 -- ============================================================
 create table mercadeo.customers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
   name text not null,
   email text,
@@ -127,7 +126,7 @@ create index idx_customers_business_id on mercadeo.customers(business_id);
 -- 5. SALES
 -- ============================================================
 create table mercadeo.sales (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
   customer_id uuid references mercadeo.customers(id) on delete set null,
 
@@ -155,7 +154,7 @@ create index idx_sales_created_at on mercadeo.sales(created_at);
 -- 6. SALE ITEMS
 -- ============================================================
 create table mercadeo.sale_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   sale_id uuid not null references mercadeo.sales(id) on delete cascade,
   product_id uuid not null references mercadeo.products(id) on delete restrict,
   variant_id uuid references mercadeo.product_variants(id) on delete set null,
@@ -175,7 +174,7 @@ create index idx_sale_items_product_id on mercadeo.sale_items(product_id);
 -- 7. EXPENSES
 -- ============================================================
 create table mercadeo.expenses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
 
   title text not null,
@@ -201,7 +200,7 @@ create index idx_expenses_expense_date on mercadeo.expenses(expense_date);
 -- 8. ACCOUNTS RECEIVABLE
 -- ============================================================
 create table mercadeo.accounts_receivable (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
   customer_id uuid not null references mercadeo.customers(id) on delete cascade,
   sale_id uuid references mercadeo.sales(id) on delete set null,
@@ -225,7 +224,7 @@ create index idx_accounts_receivable_due_date on mercadeo.accounts_receivable(du
 -- 9. ACCOUNTS PAYABLE
 -- ============================================================
 create table mercadeo.accounts_payable (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
 
   supplier_name text not null,
@@ -249,7 +248,7 @@ create index idx_accounts_payable_due_date on mercadeo.accounts_payable(due_date
 -- 10. EMPLOYEES
 -- ============================================================
 create table mercadeo.employees (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
 
   full_name text not null,
@@ -271,7 +270,7 @@ create index idx_employees_business_id on mercadeo.employees(business_id);
 -- 11. CASH MOVEMENTS
 -- ============================================================
 create table mercadeo.cash_movements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
 
   type text not null check (type in ('income', 'expense', 'transfer', 'adjustment')),
@@ -294,7 +293,7 @@ create index idx_cash_movements_created_at on mercadeo.cash_movements(created_at
 -- 12. EMERGENCY FUND
 -- ============================================================
 create table mercadeo.emergency_fund (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
 
   target_amount numeric(12,2) not null default 0,
@@ -311,7 +310,7 @@ create index idx_emergency_fund_business_id on mercadeo.emergency_fund(business_
 -- 13. ALERTS
 -- ============================================================
 create table mercadeo.alerts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
 
   type text not null check (type in ('stock_low', 'debt_due', 'payment_received', 'subscription_expiring', 'custom')),
@@ -333,7 +332,7 @@ create index idx_alerts_is_read on mercadeo.alerts(is_read);
 -- 14. AI CONVERSATIONS (Copilot)
 -- ============================================================
 create table mercadeo.ai_conversations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
 
   title text,
@@ -347,7 +346,7 @@ create index idx_ai_conversations_business_id on mercadeo.ai_conversations(busin
 -- 15. AI MESSAGES (Copilot)
 -- ============================================================
 create table mercadeo.ai_messages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   conversation_id uuid not null references mercadeo.ai_conversations(id) on delete cascade,
 
   role text not null check (role in ('user', 'assistant', 'system')),
@@ -363,7 +362,7 @@ create index idx_ai_messages_conversation_id on mercadeo.ai_messages(conversatio
 -- 16. FINANCIAL PROJECTIONS
 -- ============================================================
 create table mercadeo.financial_projections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
 
   period_type text not null check (period_type in ('weekly', 'monthly', 'quarterly', 'yearly')),
@@ -388,7 +387,7 @@ create index idx_financial_projections_business_id on mercadeo.financial_project
 -- 17. INVESTMENTS
 -- ============================================================
 create table mercadeo.investments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
 
   investor_name text not null,
@@ -406,7 +405,7 @@ create index idx_investments_business_id on mercadeo.investments(business_id);
 -- 18. AUDIT LOG
 -- ============================================================
 create table mercadeo.audit_log (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   business_id uuid not null references mercadeo.profiles(id) on delete cascade,
   user_id uuid references auth.users(id) on delete set null,
 

@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Store, LogOutIcon, BellIcon } from "lucide-react"
 import { createClient } from "@/lib/supabase/server"
+import { signOut } from "@/lib/actions/auth"
 
 import { SidebarNav } from "@/components/layout/sidebar-nav"
 import { MobileNav } from "@/components/layout/mobile-nav"
@@ -23,12 +24,6 @@ export async function DashboardShell({ children }: { children: React.ReactNode }
   const initials = user?.email?.charAt(0)?.toUpperCase() ?? "U"
   const displayName = user?.user_metadata?.full_name ?? user?.email?.split("@")[0] ?? "Usuario"
   const avatarUrl = user?.user_metadata?.avatar_url ?? null
-
-  async function signOut() {
-    "use server"
-    const supabase = await createClient()
-    await supabase.auth.signOut()
-  }
 
   return (
     <div className="flex min-h-screen">

@@ -7,10 +7,6 @@ import { AccountsTable } from "@/components/finances/accounts-table"
 import { updateAccountsReceivable, getAccountsReceivable } from "@/lib/actions/finances"
 import { getCurrentUser } from "@/lib/actions/auth"
 
-export const metadata = {
-  title: "Cuentas por Cobrar",
-}
-
 type AccountRow = any
 
 export default function AccountsReceivablePage() {

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s | MERCADEO",
   },
   description:
-    "All-in-one business management, online catalog, and AI copilot for modern merchants.",
+    "Gestión integral de negocios, catálogo en línea y copiloto IA para comerciantes modernos.",
 };
 
 export default function RootLayout({
