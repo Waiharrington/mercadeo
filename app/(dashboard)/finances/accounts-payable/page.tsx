@@ -2,15 +2,16 @@
 
 import * as React from "react"
 
-import { DashboardShell } from "@/components/layout/dashboard-shell"
+import { DashboardShellClient } from "@/components/layout/dashboard-shell-client"
 import { AccountsTable } from "@/components/finances/accounts-table"
 import { updateAccountsPayable, getAccountsPayable } from "@/lib/actions/finances"
-import { getCurrentUser } from "@/lib/actions/auth"
+import { getCurrentUser, signOut } from "@/lib/actions/auth"
 
 export default function AccountsPayablePage() {
   const [accounts, setAccounts] = React.useState<any[]>([])
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
+  const [user, setUser] = React.useState<{ email?: string; displayName: string; initials: string; avatarUrl?: string | null } | null>(null)
 
   React.useEffect(() => {
     async function load() {
@@ -21,6 +22,13 @@ export default function AccountsPayablePage() {
           setLoading(false)
           return
         }
+        const name = profile.full_name || profile.email || ""
+        setUser({
+          email: profile.email,
+          displayName: name,
+          initials: name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) || "?",
+          avatarUrl: profile.avatar_url ?? null,
+        })
         const result = await getAccountsPayable(profile.id)
         if (result.success && result.data) {
           setAccounts(result.data)
@@ -49,32 +57,32 @@ export default function AccountsPayablePage() {
 
   if (loading) {
     return (
-      <DashboardShell>
+      <DashboardShellClient user={user} signOutAction={signOut}>
         <div className="space-y-6">
           <h1 className="text-2xl font-bold tracking-tight">Cuentas por Pagar</h1>
           <div className="flex h-48 items-center justify-center">
             <p className="text-sm text-muted-foreground">Cargando...</p>
           </div>
         </div>
-      </DashboardShell>
+      </DashboardShellClient>
     )
   }
 
   if (error) {
     return (
-      <DashboardShell>
+      <DashboardShellClient user={user} signOutAction={signOut}>
         <div className="space-y-6">
           <h1 className="text-2xl font-bold tracking-tight">Cuentas por Pagar</h1>
           <div className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
             {error}
           </div>
         </div>
-      </DashboardShell>
+      </DashboardShellClient>
     )
   }
 
   return (
-    <DashboardShell>
+    <DashboardShellClient user={user} signOutAction={signOut}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Cuentas por Pagar</h1>
@@ -91,6 +99,6 @@ export default function AccountsPayablePage() {
           onUpdatePayment={handleUpdatePayment}
         />
       </div>
-    </DashboardShell>
+    </DashboardShellClient>
   )
 }

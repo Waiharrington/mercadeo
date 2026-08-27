@@ -3,30 +3,37 @@
 import * as React from "react"
 import { redirect } from "next/navigation"
 import { TagIcon } from "lucide-react"
-import { DashboardShell } from "@/components/layout/dashboard-shell"
+import { DashboardShellClient } from "@/components/layout/dashboard-shell-client"
 import { CategoryManager } from "@/components/inventory/category-manager"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/client"
+import { signOut } from "@/lib/actions/auth"
 
 export default function CategoriesPage() {
   const [categories, setCategories] = React.useState<string[]>([])
   const [productCounts, setProductCounts] = React.useState<Record<string, number>>({})
   const [loading, setLoading] = React.useState(true)
+  const [user, setUser] = React.useState<{ email?: string; displayName: string; initials: string; avatarUrl?: string | null } | null>(null)
 
   React.useEffect(() => {
     async function loadCategories() {
       const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      if (!authUser) {
         redirect("/login")
         return
       }
+
+      const displayName = authUser.user_metadata?.full_name ?? authUser.email?.split("@")[0] ?? "Usuario"
+      const initials = authUser.email?.charAt(0)?.toUpperCase() ?? "U"
+      const avatarUrl = authUser.user_metadata?.avatar_url ?? null
+      setUser({ email: authUser.email, displayName, initials, avatarUrl })
 
       const { data } = await supabase
         .schema("mercadeo")
         .from("products")
         .select("category")
-        .eq("business_id", user.id)
+        .eq("business_id", authUser.id)
         .not("category", "is", null)
 
       const categoryMap: Record<string, number> = {}
@@ -50,14 +57,14 @@ export default function CategoriesPage() {
 
   async function handleUpdate(oldName: string, newName: string) {
     const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (!authUser) return
 
     await supabase
       .schema("mercadeo")
       .from("products")
       .update({ category: newName })
-      .eq("business_id", user.id)
+      .eq("business_id", authUser.id)
       .eq("category", oldName)
 
     setCategories((prev) =>
@@ -72,14 +79,14 @@ export default function CategoriesPage() {
 
   async function handleDelete(name: string) {
     const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (!authUser) return
 
     await supabase
       .schema("mercadeo")
       .from("products")
       .update({ category: null })
-      .eq("business_id", user.id)
+      .eq("business_id", authUser.id)
       .eq("category", name)
 
     setCategories((prev) => prev.filter((c) => c !== name))
@@ -90,7 +97,7 @@ export default function CategoriesPage() {
   }
 
   return (
-    <DashboardShell>
+    <DashboardShellClient user={user} signOutAction={signOut}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Categorias</h1>
@@ -125,6 +132,6 @@ export default function CategoriesPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardShell>
+    </DashboardShellClient>
   )
 }

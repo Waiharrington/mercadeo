@@ -4,7 +4,8 @@ import { useState, useEffect, useTransition } from "react"
 import { Loader2, Calculator } from "lucide-react"
 
 import { calculateCommissions } from "@/lib/actions/payroll"
-import { DashboardShell } from "@/components/layout/dashboard-shell"
+import { signOut } from "@/lib/actions/auth"
+import { DashboardShellClient } from "@/components/layout/dashboard-shell-client"
 import { CommissionCalculator } from "@/components/payroll/commission-calculator"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -21,6 +22,7 @@ export default function CommissionsPage() {
   interface CommissionEntry { employee_id: string; full_name: string; commission_rate: number; total_sales: number; commission_earned: number }
   const [commissions, setCommissions] = useState<CommissionEntry[]>([])
   const [businessId, setBusinessId] = useState("")
+  const [user, setUser] = useState<{ email?: string; displayName: string; initials: string; avatarUrl?: string | null } | null>(null)
 
   const now = new Date()
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1)
@@ -30,7 +32,16 @@ export default function CommissionsPage() {
     async function loadBusinessId() {
       const { getCurrentUser } = await import("@/lib/actions/auth")
       const { profile } = await getCurrentUser()
-      if (profile) setBusinessId(profile.id)
+      if (profile) {
+        setBusinessId(profile.id)
+        const name = profile.full_name || profile.email || ""
+        setUser({
+          email: profile.email,
+          displayName: name,
+          initials: name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) || "?",
+          avatarUrl: profile.avatar_url ?? null,
+        })
+      }
     }
     loadBusinessId()
   }, [])
@@ -61,7 +72,7 @@ export default function CommissionsPage() {
   const years = Array.from({ length: 5 }, (_, i) => now.getFullYear() - i)
 
   return (
-    <DashboardShell>
+    <DashboardShellClient user={user} signOutAction={signOut}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
@@ -141,6 +152,6 @@ export default function CommissionsPage() {
           </Card>
         )}
       </div>
-    </DashboardShell>
+    </DashboardShellClient>
   )
 }

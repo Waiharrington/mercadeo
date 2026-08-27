@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Send, MessageSquare, Smartphone, Mail, Eye } from "lucide-react"
-import { DashboardShell } from "@/components/layout/dashboard-shell"
+import { DashboardShellClient } from "@/components/layout/dashboard-shell-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { createCampaign } from "@/lib/actions/marketing"
+import { signOut } from "@/lib/actions/auth"
 
 const CAMPAIGN_TYPES = [
   { id: "whatsapp", label: "WhatsApp", icon: MessageSquare, color: "text-green-600" },
@@ -58,6 +59,24 @@ export default function NewCampaignPage() {
   const [sending, setSending] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
   const [schedule, setSchedule] = useState("now")
+  const [user, setUser] = useState<{ email?: string; displayName: string; initials: string; avatarUrl?: string | null } | null>(null)
+
+  useEffect(() => {
+    async function loadUser() {
+      const { getCurrentUser } = await import("@/lib/actions/auth")
+      const { profile } = await getCurrentUser()
+      if (profile) {
+        const name = profile.full_name || profile.email || ""
+        setUser({
+          email: profile.email,
+          displayName: name,
+          initials: name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) || "?",
+          avatarUrl: profile.avatar_url ?? null,
+        })
+      }
+    }
+    loadUser()
+  }, [])
 
   function applyTemplate(content: string) {
     setMessage(content)
@@ -91,7 +110,7 @@ export default function NewCampaignPage() {
   }
 
   return (
-    <DashboardShell>
+    <DashboardShellClient user={user} signOutAction={signOut}>
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="flex items-center gap-3">
           <Button
@@ -270,6 +289,6 @@ export default function NewCampaignPage() {
           </Button>
         </div>
       </div>
-    </DashboardShell>
+    </DashboardShellClient>
   )
 }

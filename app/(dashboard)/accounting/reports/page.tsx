@@ -10,7 +10,8 @@ import {
   Loader2,
 } from "lucide-react"
 
-import { DashboardShell } from "@/components/layout/dashboard-shell"
+import { DashboardShellClient } from "@/components/layout/dashboard-shell-client"
+import { signOut } from "@/lib/actions/auth"
 import { BalanceSheet } from "@/components/accounting/balance-sheet"
 import { AccountingExport } from "@/components/accounting/accounting-export"
 import { Button } from "@/components/ui/button"
@@ -79,12 +80,22 @@ export default function AccountingReportsPage() {
   type ReportData = BalanceData | IncomeData | BookData | null
 
   const [reportData, setReportData] = useState<ReportData>(null)
+  const [user, setUser] = useState<{ email?: string; displayName: string; initials: string; avatarUrl?: string | null } | null>(null)
 
   useEffect(() => {
     async function loadBusinessId() {
       const { getCurrentUser } = await import("@/lib/actions/auth")
       const { profile } = await getCurrentUser()
-      if (profile) setBusinessId(profile.id)
+      if (profile) {
+        setBusinessId(profile.id)
+        const name = profile.full_name || profile.email || ""
+        setUser({
+          email: profile.email,
+          displayName: name,
+          initials: name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) || "?",
+          avatarUrl: profile.avatar_url ?? null,
+        })
+      }
     }
     loadBusinessId()
   }, [])
@@ -251,7 +262,7 @@ export default function AccountingReportsPage() {
   }
 
   return (
-    <DashboardShell>
+    <DashboardShellClient user={user} signOutAction={signOut}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Reportes Contables</h1>
@@ -547,6 +558,6 @@ export default function AccountingReportsPage() {
           </Card>
         )}
       </div>
-    </DashboardShell>
+    </DashboardShellClient>
   )
 }
